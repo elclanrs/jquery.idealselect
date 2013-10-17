@@ -3,6 +3,7 @@ Ideal Select
 
 Small select dropdown replacement.
 
+**Support:** IE9+ and modern browsers
 **Demo:** http://jsbin.com/uMahupU/1
 
 ### How To
