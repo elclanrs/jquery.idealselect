@@ -3,8 +3,8 @@ Ideal Select
 
 Small select dropdown replacement.
 
-**Support:** IE9+ and modern browsers
-**Demo:** http://jsbin.com/uMahupU/1
+**Support:** IE9+ and modern browsers  
+**Demo:** http://jsbin.com/uMahupU/3
 
 ### How To
 
@@ -38,4 +38,17 @@ Just trigger events on the original select element:
 $('#states').change(function() {
   console.log('triggered!');  
 });
+```
+
+### Dynamic
+
+If you add more elements to your select make sure to build the markup again:
+
+```javascript
+var options = [
+  '<option value="one">One</option>',
+  '<option value="two">Two</option>',
+  '<option value="three">Three</option>'
+];
+$('#states').append(options.join('')).idealselect('_build');
 ```

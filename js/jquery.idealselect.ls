@@ -11,17 +11,17 @@ let $ = jQuery, doc = document, win = window
 
     _init: ->
       @select$ = $ @el
-      @options$ = @select$.find \option
 
       @select$
         .css position: \absolute, left: \-9999px
         .attr \tabindex -1
 
       @_build!
-      @_events!
 
 
     _build: ->
+      @options$ = @select$.find \option
+
       default$ = @options$.filter \:selected
 
       @items$ = $ do
@@ -40,18 +40,21 @@ let $ = jQuery, doc = document, win = window
 
       @dropdown$ = $ '<ul class="dropdown"></ul>' .append @items$
 
-      @idealselect$ = $ do
-        """
+      @idealselect$ = $ """
         <div class="idealselect" tabindex="0">
           <ul>
             <li></li>
           </ul>
         </div>
-        """
+      """
+
+      @select$.next \.idealselect .remove!
 
       @idealselect$
         .find \li .append @title$, @dropdown$
         .end!insert-after @select$
+
+      @_events!
 
 
     _update: (index) ->
@@ -67,12 +70,25 @@ let $ = jQuery, doc = document, win = window
         position = item$.position!top
 
         if position >= height
-          item$.get 0 .scroll-into-view!
+          item$.0 .scroll-into-view false
 
         if position < 0
-          item$.get 0 .scroll-into-view false
+          item$.0 .scroll-into-view!
       else
-        @items$.filter \.selected .get 0 .scroll-into-view!
+        @items$.filter \.selected .0 .scroll-into-view!
+
+
+    _find: (letter) ->
+      matches$ = @items$.filter -> ($ @ .text!index-of letter) is 0
+
+      first = matches$.index!
+
+      next = matches$.slice do
+        (matches$.index matches$.filter \.selected) + 1
+        matches$.length
+      .index!
+
+      if next > -1 then next else first
 
 
     _events: ->
@@ -111,21 +127,8 @@ let $ = jQuery, doc = document, win = window
 
             # Letter
             else
-              letter = String.from-char-code e.which
-
-              if letter is /\w/
-                matches$ = @items$.filter -> ($ @ .text!index-of letter) is 0
-
-                first = matches$.index!
-
-                next = matches$.slice do
-                  (matches$.index matches$.filter \.selected) + 1
-                  matches$.length
-                .index!
-
-                index = if next > -1 then next else first
-
-                scroll-now = true
+              index = @_find String.from-char-code e.which
+              scroll-now = true
 
           if index > -1
             @_update index

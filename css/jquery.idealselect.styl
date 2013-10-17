@@ -63,9 +63,6 @@ items-per-scroll = 7
     &:hover
       background: linear-gradient(lighten(title-color, 20), lighten(title-color, 5))
 
-    &:active
-      background: title-color
-
     &:focus
       outline: none
 
@@ -93,8 +90,8 @@ items-per-scroll = 7
     top: 100%
     left: 0
     width: 100%
-    height: (2em*items-per-scroll)
-    overflow-y: scroll
+    max-height: (2em*items-per-scroll)
+    overflow-y: auto
     background: white
     border: 1px solid #aaa
     border-top: 0

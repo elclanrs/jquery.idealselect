@@ -6,16 +6,15 @@
   plugin.methods = {
     _init: function(){
       this.select$ = $(this.el);
-      this.options$ = this.select$.find('option');
       this.select$.css({
         position: 'absolute',
         left: '-9999px'
       }).attr('tabindex', -1);
-      this._build();
-      return this._events();
+      return this._build();
     },
     _build: function(){
       var default$;
+      this.options$ = this.select$.find('option');
       default$ = this.options$.filter(':selected');
       this.items$ = $(this.options$.map(function(){
         return "<li>" + $(this).text() + "</li>";
@@ -24,7 +23,9 @@
       this.title$ = $("<a href=\"#\" class=\"title\" tabindex=\"-1\">\n  <span>" + default$.text() + "</span>\n  <i/>\n</a>");
       this.dropdown$ = $('<ul class="dropdown"></ul>').append(this.items$);
       this.idealselect$ = $("<div class=\"idealselect\" tabindex=\"0\">\n  <ul>\n    <li></li>\n  </ul>\n</div>");
-      return this.idealselect$.find('li').append(this.title$, this.dropdown$).end().insertAfter(this.select$);
+      this.select$.next('.idealselect').remove();
+      this.idealselect$.find('li').append(this.title$, this.dropdown$).end().insertAfter(this.select$);
+      return this._events();
     },
     _update: function(index){
       this.options$.eq(index).prop('selected', true);
@@ -38,13 +39,26 @@
         height = this.dropdown$.height();
         position = item$.position().top;
         if (position >= height) {
-          item$.get(0).scrollIntoView();
+          item$[0].scrollIntoView(false);
         }
         if (position < 0) {
-          return item$.get(0).scrollIntoView(false);
+          return item$[0].scrollIntoView();
         }
       } else {
-        return this.items$.filter('.selected').get(0).scrollIntoView();
+        return this.items$.filter('.selected')[0].scrollIntoView();
+      }
+    },
+    _find: function(letter){
+      var matches$, first, next;
+      matches$ = this.items$.filter(function(){
+        return $(this).text().indexOf(letter) === 0;
+      });
+      first = matches$.index();
+      next = matches$.slice(matches$.index(matches$.filter('.selected')) + 1, matches$.length).index();
+      if (next > -1) {
+        return next;
+      } else {
+        return first;
       }
     },
     _events: function(){
@@ -70,7 +84,7 @@
         this$.idealselect$.removeClass('open');
         return this$.select$.blur();
       }).keydown(function(e){
-        var index, letter, matches$, first, next, scrollNow;
+        var index, scrollNow;
         index = this$.options$.filter(':selected').index();
         switch (e.which) {
         case 13:
@@ -87,16 +101,8 @@
           }
           break;
         default:
-          letter = String.fromCharCode(e.which);
-          if (/\w/.exec(letter)) {
-            matches$ = this$.items$.filter(function(){
-              return $(this).text().indexOf(letter) === 0;
-            });
-            first = matches$.index();
-            next = matches$.slice(matches$.index(matches$.filter('.selected')) + 1, matches$.length).index();
-            index = next > -1 ? next : first;
-            scrollNow = true;
-          }
+          index = this$._find(String.fromCharCode(e.which));
+          scrollNow = true;
         }
         if (index > -1) {
           this$._update(index);
