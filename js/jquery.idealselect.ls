@@ -51,8 +51,8 @@ let $ = jQuery, doc = document, win = window
       @select$.next \.idealselect .remove!
 
       @idealselect$
-        .find \li .append @title$, @dropdown$
-        .end!insert-after @select$
+        ..find \li .append @title$, @dropdown$
+        ..insert-after @select$
 
       @_events!
 

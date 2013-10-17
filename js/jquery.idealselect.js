@@ -13,7 +13,7 @@
       return this._build();
     },
     _build: function(){
-      var default$;
+      var default$, x$;
       this.options$ = this.select$.find('option');
       default$ = this.options$.filter(':selected');
       this.items$ = $(this.options$.map(function(){
@@ -24,7 +24,9 @@
       this.dropdown$ = $('<ul class="dropdown"></ul>').append(this.items$);
       this.idealselect$ = $("<div class=\"idealselect\" tabindex=\"0\">\n  <ul>\n    <li></li>\n  </ul>\n</div>");
       this.select$.next('.idealselect').remove();
-      this.idealselect$.find('li').append(this.title$, this.dropdown$).end().insertAfter(this.select$);
+      x$ = this.idealselect$;
+      x$.find('li').append(this.title$, this.dropdown$);
+      x$.insertAfter(this.select$);
       return this._events();
     },
     _update: function(index){
