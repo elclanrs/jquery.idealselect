@@ -19,3 +19,4 @@
 .idealselect .dropdown li:hover{background:#fffade}
 .idealselect .dropdown li.selected,.idealselect .dropdown li.selected:active{color:#fff;background:#285d85;background:-webkit-linear-gradient(#285d85, #3070a0);background:-moz-linear-gradient(#285d85, #3070a0);background:-o-linear-gradient(#285d85, #3070a0);background:-ms-linear-gradient(#285d85, #3070a0);background:linear-gradient(#285d85, #3070a0)}
 .idealselect.open .dropdown{display:block}
+.ie9 .idealselect .dropdown{width:auto;min-width:100%}
