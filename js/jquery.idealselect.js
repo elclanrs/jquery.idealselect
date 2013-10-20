@@ -1,125 +1,124 @@
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function($, doc, win){
-  var plugin;
-  plugin = {};
-  plugin.name = 'idealselect';
-  plugin.methods = {
-    _init: function(){
-      this.select$ = $(this.el);
-      this.select$.css({
-        position: 'absolute',
-        left: '-9999px'
-      }).attr('tabindex', -1);
-      return this._build();
-    },
-    _build: function(){
-      var default$, x$;
-      this.options$ = this.select$.find('option');
-      default$ = this.options$.filter(':selected');
-      this.items$ = $(this.options$.map(function(){
-        return "<li>" + $(this).text() + "</li>";
-      }).get().join(''));
-      this.items$.eq(default$.index()).addClass('selected');
-      this.title$ = $("<a href=\"#\" class=\"title\" tabindex=\"-1\">\n  <span>" + default$.text() + "</span>\n  <i/>\n</a>");
-      this.dropdown$ = $('<ul class="dropdown"></ul>').append(this.items$);
-      this.idealselect$ = $("<div class=\"idealselect\" tabindex=\"0\">\n  <ul>\n    <li></li>\n  </ul>\n</div>");
-      this.select$.next('.idealselect').remove();
-      x$ = this.idealselect$;
-      x$.find('li').append(this.title$, this.dropdown$);
-      x$.insertAfter(this.select$);
-      return this._events();
-    },
-    _update: function(index){
-      this.options$.eq(index).prop('selected', true);
-      this.idealselect$.find('.title span').text(this.items$.eq(index).text());
-      return this.items$.removeClass('selected').eq(index).addClass('selected');
-    },
-    _scroll: function(index){
-      var item$, height, position;
-      if (index) {
-        item$ = this.items$.eq(index);
-        height = this.dropdown$.height();
-        position = item$.position().top;
-        if (position >= height) {
-          item$[0].scrollIntoView(false);
-        }
-        if (position < 0) {
-          return item$[0].scrollIntoView();
-        }
-      } else {
-        return this.items$.filter('.selected')[0].scrollIntoView();
-      }
-    },
-    _find: function(letter){
-      var matches$, first, next;
-      matches$ = this.items$.filter(function(){
-        return $(this).text().indexOf(letter) === 0;
-      });
-      first = matches$.index();
-      next = matches$.slice(matches$.index(matches$.filter('.selected')) + 1, matches$.length).index();
-      if (next > -1) {
-        return next;
-      } else {
-        return first;
-      }
-    },
-    _events: function(){
-      var this$ = this;
-      this.select$.change(function(e){
-        return this$._update($(e.target).find(':selected').index());
-      });
-      this.title$.click(function(e){
-        e.preventDefault();
-        this$.idealselect$.focus().toggleClass('open');
-        return this$._scroll();
-      });
-      this.items$.click(function(e){
-        this$._update($(e.target).index());
-        this$.idealselect$.removeClass('open');
-        return this$.select$.change();
-      });
-      return this.idealselect$.mousedown(function(it){
-        return it.preventDefault();
-      }).focus(function(){
-        return this$.select$.triggerHandler('focus');
-      }).blur(function(){
-        this$.idealselect$.removeClass('open');
-        return this$.select$.blur();
-      }).keydown(function(e){
-        var index, scrollNow;
-        index = this$.options$.filter(':selected').index();
-        switch (e.which) {
-        case 13:
-          this$.idealselect$.toggleClass('open');
-          break;
-        case 38:
-          if (index - 1 > -1) {
-            index = index - 1;
+  require('./plugin')({
+    name: 'idealselect',
+    methods: {
+      _init: function(){
+        this.select$ = $(this.el);
+        this.select$.css({
+          position: 'absolute',
+          left: '-9999px'
+        }).attr('tabindex', -1);
+        return this._build();
+      },
+      _build: function(){
+        var default$, x$;
+        this.options$ = this.select$.find('option');
+        default$ = this.options$.filter(':selected');
+        this.items$ = $(this.options$.map(function(){
+          return "<li>" + $(this).text() + "</li>";
+        }).get().join(''));
+        this.items$.eq(default$.index()).addClass('selected');
+        this.title$ = $("<a href=\"#\" class=\"title\" tabindex=\"-1\">\n  <span>" + default$.text() + "</span>\n  <i/>\n</a>");
+        this.dropdown$ = $('<ul class="dropdown"></ul>').append(this.items$);
+        this.idealselect$ = $("<div class=\"idealselect\" tabindex=\"0\">\n  <ul>\n    <li></li>\n  </ul>\n</div>");
+        this.select$.next('.idealselect').remove();
+        x$ = this.idealselect$;
+        x$.find('li').append(this.title$, this.dropdown$);
+        x$.insertAfter(this.select$);
+        return this._events();
+      },
+      _update: function(index){
+        this.options$.eq(index).prop('selected', true);
+        this.idealselect$.find('.title span').text(this.items$.eq(index).text());
+        return this.items$.removeClass('selected').eq(index).addClass('selected');
+      },
+      _scroll: function(index){
+        var item$, height, position;
+        if (index) {
+          item$ = this.items$.eq(index);
+          height = this.dropdown$.height();
+          position = item$.position().top;
+          if (position >= height) {
+            item$[0].scrollIntoView(false);
           }
-          break;
-        case 40:
-          if (index + 1 < this$.items$.length) {
-            index = index + 1;
+          if (position < 0) {
+            return item$[0].scrollIntoView();
           }
-          break;
-        default:
-          index = this$._find(String.fromCharCode(e.which));
-          scrollNow = true;
+        } else {
+          return this.items$.filter('.selected')[0].scrollIntoView();
         }
-        if (index > -1) {
-          this$._update(index);
-          this$._scroll(scrollNow ? 0 : index);
-          this$.select$.change();
-        }
-        return $(doc).one('keydown', function(e){
-          if (e.which === 38 || e.which === 40) {
-            return e.preventDefault();
-          }
+      },
+      _find: function(letter){
+        var matches$, first, next;
+        matches$ = this.items$.filter(function(){
+          return $(this).text().indexOf(letter) === 0;
         });
-      });
+        first = matches$.index();
+        next = matches$.slice(matches$.index(matches$.filter('.selected')) + 1, matches$.length).index();
+        if (next > -1) {
+          return next;
+        } else {
+          return first;
+        }
+      },
+      _events: function(){
+        var this$ = this;
+        this.select$.change(function(e){
+          return this$._update($(e.target).find(':selected').index());
+        });
+        this.title$.click(function(e){
+          e.preventDefault();
+          this$.idealselect$.focus().toggleClass('open');
+          return this$._scroll();
+        });
+        this.items$.click(function(e){
+          this$._update($(e.target).index());
+          this$.idealselect$.removeClass('open');
+          return this$.select$.change();
+        });
+        return this.idealselect$.mousedown(function(it){
+          return it.preventDefault();
+        }).focus(function(){
+          return this$.select$.triggerHandler('focus');
+        }).blur(function(){
+          this$.idealselect$.removeClass('open');
+          return this$.select$.blur();
+        }).keydown(function(e){
+          var index, scrollNow;
+          index = this$.options$.filter(':selected').index();
+          switch (e.which) {
+          case 13:
+            this$.idealselect$.toggleClass('open');
+            break;
+          case 38:
+            if (index - 1 > -1) {
+              index = index - 1;
+            }
+            break;
+          case 40:
+            if (index + 1 < this$.items$.length) {
+              index = index + 1;
+            }
+            break;
+          default:
+            index = this$._find(String.fromCharCode(e.which));
+            scrollNow = true;
+          }
+          if (index > -1) {
+            this$._update(index);
+            this$._scroll(scrollNow ? 0 : index);
+            this$.select$.change();
+          }
+          return $(doc).one('keydown', function(e){
+            if (e.which === 38 || e.which === 40) {
+              return e.preventDefault();
+            }
+          });
+        });
+      }
     }
-  };
-  require('./plugin')(plugin);
+  });
 }.call(this, jQuery, document, window));
 },{"./plugin":2}],2:[function(require,module,exports){
 /**
