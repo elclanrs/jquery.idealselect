@@ -35,18 +35,16 @@
       },
       _scroll: function(index){
         var item$, height, position;
-        if (index) {
-          item$ = this.items$.eq(index);
-          height = this.dropdown$.height();
-          position = item$.position().top;
-          if (position >= height) {
-            item$[0].scrollIntoView(false);
-          }
-          if (position < 0) {
-            return item$[0].scrollIntoView();
-          }
-        } else {
-          return this.items$.filter('.selected')[0].scrollIntoView();
+        item$ = index
+          ? this.items$.eq(index)
+          : this.items$.filter('.selected');
+        height = this.dropdown$.height();
+        position = item$.position().top;
+        if (position >= height) {
+          item$.parent()[0].scrollTop = item$[0].offsetTop - height + item$.height();
+        }
+        if (!index || position < 0) {
+          return item$.parent()[0].scrollTop = item$[0].offsetTop;
         }
       },
       _find: function(letter){

@@ -49,16 +49,13 @@ let $ = jQuery, doc = document, win = window
         @items$.remove-class \selected .eq index .add-class \selected
 
       _scroll: (index) ->
-        if index
-          item$ = @items$.eq index
-          height = @dropdown$.height!
-          position = item$.position!top
-          if position >= height
-            item$.0 .scroll-into-view false
-          if position < 0
-            item$.0 .scroll-into-view!
-        else
-          @items$.filter \.selected .0 .scroll-into-view!
+        item$ = if index then @items$.eq index else @items$.filter \.selected
+        height = @dropdown$.height!
+        position = item$.position!top
+        if position >= height
+          item$.parent!.0.scroll-top = item$.0.offset-top - height + item$.height!
+        if not index or position < 0
+          item$.parent!.0.scroll-top = item$.0.offset-top
 
       _find: (letter) ->
         matches$ = @items$.filter -> ($ @ .text!index-of letter) is 0
