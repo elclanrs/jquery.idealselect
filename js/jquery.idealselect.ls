@@ -20,7 +20,7 @@ let $ = jQuery, doc = document, win = window
         default$ = @options$.filter \:selected
         @items$ = $ do
           @options$
-            .map -> "<li>#{$ @ .text!}</li>"
+            .map -> "<li title=\"#{$ @ .text!}\">#{$ @ .text!}</li>"
             .get!join ''
         @items$.eq default$.index! .add-class \selected
         @title$ = $ """
